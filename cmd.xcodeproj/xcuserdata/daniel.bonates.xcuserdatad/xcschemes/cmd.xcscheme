@@ -74,11 +74,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-so peixe &quot;open https://peixeurbano.com&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-s peixe &quot;open https://peixeurbano.com&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

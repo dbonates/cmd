@@ -53,6 +53,12 @@
     return [homeDir stringByAppendingString:bashfile_bkp];
 }
 
+- (NSString *)injectString {
+    
+    return @"source ~/.db_cmd_alias";
+    
+}
+
 
 - (void)createDbFileIfNeeded {
     
@@ -167,36 +173,36 @@
                               
 - (void)updateBashProfileIfNeeded {
       
-      NSError *error;
-      NSString *bashProfileContents = [NSString stringWithContentsOfFile: [self bashProfileFile] encoding:NSUTF8StringEncoding error: &error];
+    NSError *error;
+    NSString *bashProfileContents = [NSString stringWithContentsOfFile: [self bashProfileFile] encoding:NSUTF8StringEncoding error: &error];
+
+    if (error != nil) {
+      [Logger log: @"\nerror getting .bash_profile\n"];
+      return;
+    }
+
+    NSString *injectString = [self injectString];
+    
+    if ([bashProfileContents rangeOfString:injectString].location == NSNotFound) {
       
-      if (error != nil) {
-          [Logger log: @"\nerror getting .bash_profile\n"];
+      BOOL success = [bashProfileContents writeToFile: [self bashProfileFileForBackup] atomically:YES encoding:NSUTF8StringEncoding error:&error];
+      
+      if (!success) {
+          [Logger log: @"\ncouldn't backup .bash_profile file, too dangerous to continue, exiting...\n"];
           return;
       }
       
-      NSString *injectString = @"source ~/.db_alias";
+      bashProfileContents = [bashProfileContents stringByAppendingString:[NSString stringWithFormat:@"\n%@\n", injectString]];
+      success = [bashProfileContents writeToFile:[self bashProfileFile] atomically:YES encoding:NSUTF8StringEncoding error:&error];
       
-      if ([bashProfileContents rangeOfString:injectString].location == NSNotFound) {
-          
-          BOOL success = [bashProfileContents writeToFile: [self bashProfileFileForBackup] atomically:YES encoding:NSUTF8StringEncoding error:&error];
-          
-          if (!success) {
-              [Logger log: @"\ncouldn't backup .bash_profile file, too dangerous to continue, exiting...\n"];
-              return;
-          }
-          
-          bashProfileContents = [bashProfileContents stringByAppendingString:[NSString stringWithFormat:@"\n%@\n", injectString]];
-          success = [bashProfileContents writeToFile:[self bashProfileFile] atomically:YES encoding:NSUTF8StringEncoding error:&error];
-          
-          if (!success) {
-              [Logger log: @"\ncouldn't save .bash_profile file, too dangerous to continue, exiting...\n"];
-              return;
-          }
-          
-          [Logger log: @"\n.bash_profile updated\n"];
-          
+      if (!success) {
+          [Logger log: @"\ncouldn't save .bash_profile file, too dangerous to continue, exiting...\n"];
+          return;
       }
+      
+      [Logger log: @"\n.bash_profile updated\n"];
+      
+    }
                                   
 }
 
