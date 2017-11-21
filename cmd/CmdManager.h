@@ -97,9 +97,9 @@
 }
 
 
-- (int)saveCommandWithAlias:(NSString *)alias for:(NSString *)requestedCommand {
+- (int)saveCommandWithAlias:(NSString *)alias for:(NSString *)requestedCommand shouldOverride:(BOOL)shouldOverride {
     
-    if (![self validAlias: alias shouldExist: NO]) {
+    if (![self validAlias: alias shouldExist: NO shouldOverride: shouldOverride]) {
         return 1;
     }
     
@@ -117,7 +117,7 @@
 
 - (int)deleteCmdWithAlias: (NSString *)alias {
     
-    if (![self validAlias: alias shouldExist: YES]) {
+    if (![self validAlias: alias shouldExist: YES shouldOverride:NO]) {
         return 1;
     }
     
@@ -216,7 +216,7 @@
 }
 
 
-- (BOOL)validAlias: (NSString *)alias shouldExist:(BOOL)shouldExist {
+- (BOOL)validAlias: (NSString *)alias shouldExist:(BOOL)shouldExist shouldOverride:(BOOL)shouldOverride {
     
     if (alias == Nil || alias.length < 1) {
         [Logger printWrongParameters];
@@ -227,10 +227,18 @@
     
     if (aliasInUse) {
         
+        if (shouldOverride) {
+            
+            [self deleteCmdWithAlias:alias];
+            return YES;
+        }
+        
+        
         if(shouldExist) { //should exist to proceed
             return YES;
             
         } else { // alias in use cannot do save operation
+            
             [Logger log: [NSString stringWithFormat:@"\nthe alias %s%@%s is already in use, please choose another.\n\n", KYEL, alias, KWHT]];
             return NO;
         }
@@ -245,10 +253,10 @@
     }
     
     // cmd already saved?
-    NSString *currentpath = [[NSFileManager defaultManager] currentDirectoryPath];
-    if ([[self.allCmds allValues] containsObject: currentpath]) {
+    NSString *currentCommand = [[NSFileManager defaultManager] currentDirectoryPath];
+    if ([[self.allCmds allValues] containsObject: currentCommand]) {
         
-        NSString *keyForCmd = [[self.allCmds allKeysForObject: currentpath] lastObject];
+        NSString *keyForCmd = [[self.allCmds allKeysForObject: currentCommand] lastObject];
         [Logger log: [NSString stringWithFormat: @"\nthis cmd was alread saved using alias %s%@%s.\n\n", KYEL, keyForCmd, KWHT]];
         return NO;
     }

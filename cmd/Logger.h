@@ -47,6 +47,8 @@
     printf("\n\nusage:");
     printf("\n\n-s <alias>");
     printf("\n  will SAVE the current command using alias.");
+    printf("\n\n-so <alias>");
+    printf("\n  will SAVE OVERRIDE the alias with provided command.");
     printf("\n\n-d <alias>");
     printf("\n  will DELETE specified alias.");
     printf("\n\n-l");

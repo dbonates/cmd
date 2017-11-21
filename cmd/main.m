@@ -40,7 +40,11 @@ int main(int argc, const char * argv[]) {
         }
         else if ([commandArgument isEqualToString:@"-s"]) {
             NSString *requestedCommand = arguments.count < 4 ? Nil : [arguments objectAtIndex: 3];
-            return [manager saveCommandWithAlias: requestedAlias for: requestedCommand];
+            return [manager saveCommandWithAlias: requestedAlias for: requestedCommand shouldOverride: NO];
+        }
+        else if ([commandArgument isEqualToString:@"-so"]) {
+            NSString *requestedCommand = arguments.count < 4 ? Nil : [arguments objectAtIndex: 3];
+            return [manager saveCommandWithAlias: requestedAlias for: requestedCommand shouldOverride: YES];
         }
         else if([commandArgument isEqualToString:@"-d"]) {
             return [manager deleteCmdWithAlias: requestedAlias];
