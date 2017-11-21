@@ -3,7 +3,7 @@
 
 I've made this tool to bookmark common commands typed on terminal every day, so next time I just need to remember it's alias, o get it from the list provided by the `-l` argument. 😌
 
-![printscreen](https://github.com/dbonates/cmd/blob/master/img/printscreen.png)
+![printscreen](https://github.com/dbonates/cmd/blob/master/img/print.png)
 
 ### How it works
 
